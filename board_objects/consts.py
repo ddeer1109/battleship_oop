@@ -1,0 +1,6 @@
+EMPTY = "."
+SHIP = "X"
+HIT = "H"
+SUNK = "S"
+MISS = "M"
+MISS_AGAIN = "MA"

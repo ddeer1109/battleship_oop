@@ -1,10 +1,9 @@
-EMPTY_SYMBOL = "."
-SHIP_SYMBOL = "X"
-HIT_SYMBOL = "H"
-SUNK_SYMBOL = "S"
-MISSED_SYMBOL = "M"
+from Controller import Controller
+from UI import UI
+from Player import Player
+
 SHIPS_LENGTHS_FOR_BOARD_SIZES = {
-        5: [3,2,2,1],
+        5: [3,2,1],
         6: [3,2,2,2],
         7: [3,3,2,2],
         8: [4,3,3,2],
@@ -12,22 +11,19 @@ SHIPS_LENGTHS_FOR_BOARD_SIZES = {
         10: [4,3,3,3,2,2]
         }
 
-from Player import AI_player, Human_player
-from Placing import service_placing
-from Shooting import service_shooting_phase, clear_console
-
 
 def start_game(size_of_board=5, turns_limit=None):
     
-    player1 = AI_player("Player1", size_of_board)
-    player2 = AI_player("Player2", size_of_board)
-    
-    service_placing(player1, SHIPS_LENGTHS_FOR_BOARD_SIZES[size_of_board])
-    service_placing(player2, SHIPS_LENGTHS_FOR_BOARD_SIZES[size_of_board])
-    
-    winner, defeated = service_shooting_phase(player1, player2, turns_limit)
+    player1 = Player("P1", ishuman=False)
+    player2 = Player("P2", ishuman=False)
+    controller = Controller(player1, player2)
 
-    present_winner(winner, defeated)
+    controller.service_placing(player1, SHIPS_LENGTHS_FOR_BOARD_SIZES[size_of_board])
+    controller.service_placing(player2, SHIPS_LENGTHS_FOR_BOARD_SIZES[size_of_board])
+    
+    winner, defeated = controller.service_shooting_phase(player1, player2, turns_limit)
+
+    UI.present_winner(winner, defeated)
 
 
 def main_menu():
@@ -55,14 +51,3 @@ def choose_map_size():
         return 5
 
 
-def present_winner(p_object, opp_object):
-    clear_console()
-    print(f"Winner is {p_object.nickname}")
-    
-    print("Winners board:")
-    p_object.p_board.print()
-    
-    print()
-    
-    print("Defeated board:")
-    opp_object.p_board.print()
