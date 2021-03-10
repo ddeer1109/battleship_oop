@@ -4,6 +4,8 @@ import string
 from board_objects.consts import HIT, SUNK
 from board_objects.Field import Field
 
+ROW_INDEX = 0
+COL_INDEX = 1
 
 class InputGetter:
 
@@ -41,19 +43,19 @@ class InputGetter:
             user_input = str.upper(input("Try again: "))
             input_length_not_correct = len(user_input) < 2 or len(user_input) > 3
 
-        input_is_not_correct = user_input[0] not in correct_ROWS or user_input[1:] not in correct_COLS
+        input_is_not_correct = user_input[ROW_INDEX] not in correct_ROWS or user_input[COL_INDEX:] not in correct_COLS
 
         while input_is_not_correct:
             print("Incorrect input.")
             user_input = str.upper(input("Try again: "))
-            input_is_not_correct = user_input[0] not in correct_ROWS or user_input[1:] not in correct_COLS
+            input_is_not_correct = user_input[ROW_INDEX] not in correct_ROWS or user_input[COL_INDEX:] not in correct_COLS
 
         coord = InputGetter.translate_user_coords(user_input)
         return Field(coord)
 
     @staticmethod
     def translate_user_coords(coordinate):
-        row, col = InputGetter.LENGTH_DICT[coordinate[0]], InputGetter.WIDTH_DICT[coordinate[1]]
+        row, col = InputGetter.LENGTH_DICT[coordinate[ROW_INDEX]], InputGetter.WIDTH_DICT[coordinate[COL_INDEX]]
         return row, col
 
     @staticmethod
@@ -72,8 +74,7 @@ class InputGetter:
 
     @staticmethod
     def get_AI_shot_coord(pl_object):
-        ROW_IDX = 0
-        COL_IDX = 1
+
         hits = pl_object.get_hits()
         misses = pl_object.get_misses()
         if not hits:
@@ -90,69 +91,66 @@ class InputGetter:
 
         elif len(hits) >= 2:
 
-            orientation = ROW_IDX if hits[0][ROW_IDX] == hits[1][ROW_IDX] else COL_IDX
+            orientation = ROW_INDEX if hits[0][ROW_INDEX] == hits[1][ROW_INDEX] else COL_INDEX
             potential_shots = []
 
             for hit in hits:
                 neighs = list(set(InputGetter.get_neighs_of_shot(hit, pl_object)) - set(hits + misses))
                 for neigh in neighs:
-                    if orientation == ROW_IDX and neigh[ROW_IDX] == hit[ROW_IDX] or\
-                     orientation == COL_IDX and neigh[COL_IDX] == hit[COL_IDX]:
+                    if orientation == ROW_INDEX and neigh[ROW_INDEX] == hit[ROW_INDEX] or\
+                     orientation == COL_INDEX and neigh[COL_INDEX] == hit[COL_INDEX]:
                         potential_shots.append(neigh)
 
             return random.choice(potential_shots)
 
     @staticmethod
     def get_neighs_of_shot(hit, pl_obj):
-        ROW_INDEX = 0
-        COL_INDEX = 1
 
         max_length = len(pl_obj.opp_copy_bd.fields)
         max_width = len(pl_obj.opp_copy_bd.fields[ROW_INDEX])
         """Get neighbour coords for given hit coords. Help function for AI shooting."""
-        if hit[ROW_INDEX]+1 < max_length:
+        if hit[ROW_INDEX] + 1 < max_length:
             upper = (hit[ROW_INDEX] + 1, hit[COL_INDEX])
 
             try:
                 if pl_obj.shots_stats[upper] == SUNK:
-                    upper = SUNK
+                    upper = None
             except KeyError:
                 pass
         else:
             upper = None
 
-        if hit[COL_INDEX]+1 < max_width:
+        if hit[COL_INDEX] + 1 < max_width:
             right = (hit[ROW_INDEX], hit[COL_INDEX] + 1)
 
             try:
                 if pl_obj.shots_stats[right] == SUNK:
-                    right = SUNK
+                    right = None
             except KeyError:
                 pass
         else:
             right = None
 
-        if hit[ROW_INDEX]-1 >= 0:
+        if hit[ROW_INDEX] - 1 >= 0:
             lower = (hit[ROW_INDEX] - 1, hit[COL_INDEX])
 
             try:
                 if pl_obj.shots_stats[lower] == SUNK:
-                    lower = SUNK
+                    lower = None
             except KeyError:
                 pass
         else:
             lower = None
 
-        if hit[COL_INDEX]-1 >= 0:
+        if hit[COL_INDEX] - 1 >= 0:
             left = (hit[ROW_INDEX], hit[COL_INDEX] - 1)
 
             try:
                 if pl_obj.shots_stats[left] == SUNK:
-                    left = SUNK
+                    left = None
             except KeyError:
                 pass
         else:
             left = None
-
 
         return [coord for coord in [lower, right, upper, left] if coord is not None]

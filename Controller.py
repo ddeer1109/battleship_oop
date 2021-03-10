@@ -25,28 +25,25 @@ class Controller:
         human_player = player_object.ishuman
 
         for ship_length in ships_lengths_list:
-
             UI.placing_turn(player_object, ship_length)
-
             is_placing_invalid = True
             while is_placing_invalid:
-                # if human_player:
-                #     coord1 = InputGetter.get_user_valid_coord()
-                #     coord2 = InputGetter.get_user_valid_coord()
-                # else:
 
-                coord1, coord2 = InputGetter.get_AI_valid_coords(player_object.player_bd, ship_length)
-                sleep(0.5)
+                if human_player:
+                    coord1 = InputGetter.get_user_valid_coord()
+                    coord2 = InputGetter.get_user_valid_coord()
+                else:
+                    coord1, coord2 = InputGetter.get_AI_valid_coords(player_object.player_bd, ship_length)
 
                 placing = Placing(coord1, coord2)
                 is_placing_invalid = not placing.is_correct(player_object.player_bd, ship_length)
-                # if is_placing_invalid and human_player:
-                #     print("Invalid coordinates.")
+
+                if is_placing_invalid and human_player:
+                    print("Invalid coordinates.")
 
             placing.place_ship(player_object.player_bd, ship_length, player_object.ships)
-            # clear_console()
+
         UI.finish_placing_turn(player_object)
-        # clear_console()
 
     def service_shooting_phase(self, p1_obj, p2_obj, turns_limit=None):
 
@@ -83,13 +80,15 @@ class Controller:
 
             if type(player_shot) is tuple:
                 player_shot = Field(player_shot)
+
             shot_result = Controller.process_shot(player_shot, pl_object, opp_p_object)
 
             UI.display_feedback_after_shot(shot_result, player_shot)
+            UI.shotting_turn(pl_object)
 
             if Controller.has_won(opp_p_object.ships):
-                self.winner = pl_object
-                self.defeated = opp_p_object
+                self.winner, self.defeated = pl_object, opp_p_object
+                return
 
     @staticmethod
     def process_shot(player_shot, pl_object, opp_p_object):

@@ -1,5 +1,5 @@
-import Game_server
+from Game_server import GameServer
 
 
 if __name__ == "__main__":
-    Game_server.start_game()
+    GameServer(preset=True).start_game()

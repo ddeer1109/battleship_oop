@@ -17,12 +17,14 @@ class Board:
                 board.append([Field((i, j), state=EMPTY) for j in range(self.width)])
         return board
 
-    def print(self):
-        print("".ljust(4) + " ".join([str(number) for number in range(1, self.width+1)]) + "\n")
-    
-        for row_number, row in enumerate(self.fields):
-            print(string.ascii_uppercase[row_number].ljust(3) + " " + " ".join(list(map(str, row))))
+    def get_printable_list(self):
+        printable_rows = []
+        printable_rows.append("".ljust(4) + " ".join([str(number) for number in range(1, self.width+1)]))
 
+        for row_number, row in enumerate(self.fields):
+            printable_rows.append(string.ascii_uppercase[row_number].ljust(3) + " " + " ".join(list(map(str, row))))
+
+        return printable_rows
     def get_field(self, x_cd, y_cd):
         return self.fields[x_cd][y_cd]
 
