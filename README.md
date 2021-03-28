@@ -1,6 +1,7 @@
 # battleship_oop
 
-Second implementation of Battleship game in Python - OOP version. Created as extra activity during Codecool bootcamp.
+Second version of my implementation of Battleship game in Python - this version is based on OOP. 
+Project was created as extra activity during Codecool bootcamp.
 
 Interesting features:
 
@@ -9,5 +10,5 @@ Interesting features:
   - place ships in correct fields
   - shoot smart: 
       - firstly randomized shots, 
-      - when hit trying to hit in correct direction, 
+      - when hit successfully, trying to hit fields nearby, also in correct direction when hit more than one field, 
       - analyzing if potential shot field is able to be a ship (ship cannot be in neighbourhood of another ship so it does not shot around sunk ships)
